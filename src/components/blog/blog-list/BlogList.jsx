@@ -1,18 +1,34 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
-import posts from "../../../data/posts.json";
 import BlogItem from "../blog-item/BlogItem";
+import { useEffect, useState } from "react";
 
 const BlogList = (props) => {
+  const [posts, setPosts] = useState([]);
+
+  const getBlogPosts = async () => {
+    try {
+      const res = await fetch("http://localhost:3002/blogPosts");
+      if (res.ok) {
+        let data = await res.json();
+        setPosts(data);
+        console.log(data);
+      } else {
+        alert("Problem with fetch!");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getBlogPosts();
+  }, []);
+
   return (
     <Row>
       {posts.map((post) => (
-        <Col
-          md={4}
-          style={{
-            marginBottom: 50,
-          }}
-        >
+        <Col md={4} style={{ marginBottom: 50 }} key={post.id}>
           <BlogItem key={post.title} {...post} />
         </Col>
       ))}
